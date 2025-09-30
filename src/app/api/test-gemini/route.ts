@@ -18,17 +18,7 @@ export async function GET() {
 
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
     
-    // 사용 가능한 모델 목록 확인
-    try {
-      console.log('모델 목록 조회 중...');
-      const models = await genAI.listModels();
-      console.log('사용 가능한 모델들:');
-      models.forEach(model => {
-        console.log(`- ${model.name}: ${model.displayName}`);
-      });
-    } catch (listError) {
-      console.log('모델 목록 조회 실패:', listError);
-    }
+    console.log('Gemini AI 인스턴스 생성 완료');
 
     // 간단한 텍스트 생성 테스트 - 기본 모델들 시도
     const testModels = [
