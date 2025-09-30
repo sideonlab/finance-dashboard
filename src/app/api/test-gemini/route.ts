@@ -50,7 +50,8 @@ export async function GET() {
         });
         
       } catch (modelError) {
-        console.log(`${modelName} 실패:`, modelError.message);
+        const errorMessage = modelError instanceof Error ? modelError.message : '알 수 없는 오류';
+        console.log(`${modelName} 실패:`, errorMessage);
         continue;
       }
     }
@@ -66,9 +67,10 @@ export async function GET() {
     console.error('에러:', error);
     console.error('========================');
 
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
     return NextResponse.json({
       success: false,
-      error: `API 테스트 실패: ${error.message}`,
+      error: `API 테스트 실패: ${errorMessage}`,
       details: error
     });
   }

@@ -30,9 +30,10 @@ export const commonChartOptions = {
     },
     tooltip: {
       callbacks: {
-        label: function(context: { dataset: { label: string }; parsed: { y?: number } | number }) {
-          const value = (typeof context.parsed === 'number' ? context.parsed : context.parsed.y) || 0;
-          return `${context.dataset.label}: ${formatAmount(value)}`;
+        label: function(context: any) {
+          const value = context.parsed || context.parsed?.y || 0;
+          const label = context.dataset?.label || '';
+          return `${label}: ${formatAmount(value)}`;
         }
       }
     },
@@ -46,8 +47,9 @@ export const barChartOptions = {
     y: {
       beginAtZero: true,
       ticks: {
-        callback: function(value: string | number) {
-          return formatAmount(typeof value === 'string' ? parseFloat(value) : value);
+        callback: function(value: any) {
+          const numValue = typeof value === 'string' ? parseFloat(value) : (value || 0);
+          return formatAmount(numValue);
         }
       }
     },
