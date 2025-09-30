@@ -10,8 +10,8 @@ interface BalanceSheetChartProps {
       label: string;
       data: number[];
       backgroundColor: string[];
-      borderColor: string[];
-      borderWidth: number;
+      borderColor?: string[];
+      borderWidth?: number;
     }>;
   };
 }

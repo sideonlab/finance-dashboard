@@ -9,9 +9,9 @@ interface IncomeStatementChartProps {
     datasets: Array<{
       label: string;
       data: number[];
-      backgroundColor: string[];
-      borderColor: string[];
-      borderWidth: number;
+      backgroundColor: string | string[];
+      borderColor?: string | string[];
+      borderWidth?: number;
     }>;
   };
 }

@@ -1,24 +1,25 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-if (!GEMINI_API_KEY) {
-  throw new Error('GEMINI_API_KEY가 설정되지 않았습니다.');
+// 재무 분석용 모델 설정 함수
+function getGeminiModel() {
+  const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+  
+  if (!GEMINI_API_KEY) {
+    throw new Error('GEMINI_API_KEY가 설정되지 않았습니다.');
+  }
+  
+  const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+  
+  return genAI.getGenerativeModel({ 
+    model: "gemini-2.5-flash", // 최신 2.5 Flash 모델 사용
+    generationConfig: {
+      temperature: 0.3, // 더 일관된 결과를 위해 낮춤
+      topP: 0.9,
+      topK: 40,
+      maxOutputTokens: 4096, // 더 긴 응답을 위해 증가
+    },
+  });
 }
-
-// Gemini AI 인스턴스 초기화
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-
-// 재무 분석용 모델 설정 (최신 2.5 Flash 모델 사용)
-const model = genAI.getGenerativeModel({ 
-  model: "gemini-2.5-flash", // 최신 2.5 Flash 모델 사용
-  generationConfig: {
-    temperature: 0.3, // 더 일관된 결과를 위해 낮춤
-    topP: 0.9,
-    topK: 40,
-    maxOutputTokens: 4096, // 더 긴 응답을 위해 증가
-  },
-});
 
 export interface FinancialAnalysisRequest {
   companyName: string;
@@ -50,7 +51,9 @@ export async function analyzeFinancialData(data: FinancialAnalysisRequest): Prom
   try {
     console.log('=== AI 분석 시작 ===');
     console.log('회사명:', data.companyName);
-    console.log('API 키 존재:', !!GEMINI_API_KEY);
+    
+    const model = getGeminiModel();
+    console.log('모델 초기화 완료');
     
     const prompt = createFinancialAnalysisPrompt(data);
     console.log('프롬프트 길이:', prompt.length);
@@ -98,19 +101,20 @@ export async function analyzeFinancialData(data: FinancialAnalysisRequest): Prom
   } catch (error) {
     console.error('=== Gemini API 오류 상세 ===');
     console.error('에러 타입:', error?.constructor?.name);
-    console.error('에러 메시지:', error?.message);
+    console.error('에러 메시지:', error instanceof Error ? error.message : '알 수 없는 오류');
     console.error('전체 에러:', error);
     console.error('========================');
     
     // 구체적인 에러 메시지 제공
-    if (error?.message?.includes('API_KEY_INVALID')) {
+    const errorMessage = error instanceof Error ? error.message : '';
+    if (errorMessage.includes('API_KEY_INVALID')) {
       throw new Error('Gemini API 키가 유효하지 않습니다.');
-    } else if (error?.message?.includes('QUOTA_EXCEEDED')) {
+    } else if (errorMessage.includes('QUOTA_EXCEEDED')) {
       throw new Error('Gemini API 사용량이 초과되었습니다.');
-    } else if (error?.message?.includes('RATE_LIMIT_EXCEEDED')) {
+    } else if (errorMessage.includes('RATE_LIMIT_EXCEEDED')) {
       throw new Error('너무 많은 요청이 발생했습니다. 잠시 후 다시 시도해주세요.');
     } else {
-      throw new Error(`AI 분석 중 오류가 발생했습니다: ${error?.message || '알 수 없는 오류'}`);
+      throw new Error(`AI 분석 중 오류가 발생했습니다: ${errorMessage || '알 수 없는 오류'}`);
     }
   }
 }
