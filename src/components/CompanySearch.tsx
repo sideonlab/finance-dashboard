@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Company, SearchResponse } from '@/types/company';
 
 interface CompanySearchProps {
@@ -14,6 +14,7 @@ export default function CompanySearch({ onCompanySelect }: CompanySearchProps) {
   const [error, setError] = useState<string | null>(null);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [showResults, setShowResults] = useState(false);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // 디바운스 검색
   const searchFunction = useCallback(async (searchQuery: string) => {
@@ -47,10 +48,15 @@ export default function CompanySearch({ onCompanySelect }: CompanySearchProps) {
       }
   }, []);
 
-  const debouncedSearch = useCallback(
-    debounce(searchFunction, 300),
-    [searchFunction]
-  );
+  const debouncedSearch = useCallback((searchQuery: string) => {
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
+    }
+    
+    debounceTimeoutRef.current = setTimeout(() => {
+      searchFunction(searchQuery);
+    }, 300);
+  }, [searchFunction]);
 
   useEffect(() => {
     debouncedSearch(query);
@@ -152,14 +158,3 @@ export default function CompanySearch({ onCompanySelect }: CompanySearchProps) {
   );
 }
 
-// 디바운스 유틸리티 함수
-function debounce<T extends (...args: unknown[]) => unknown>(
-  func: T,
-  wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout;
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
-}

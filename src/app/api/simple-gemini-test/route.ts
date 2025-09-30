@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
@@ -46,9 +46,10 @@ export async function GET() {
     
   } catch (error) {
     console.error('오류:', error);
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
     return NextResponse.json({
       success: false,
-      error: `오류 발생: ${error.message}`,
+      error: `오류 발생: ${errorMessage}`,
       details: error
     });
   }
