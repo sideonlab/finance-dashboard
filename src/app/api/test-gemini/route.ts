@@ -7,7 +7,7 @@ export async function GET() {
   try {
     console.log('=== Gemini API 테스트 시작 ===');
     console.log('API 키 존재:', !!GEMINI_API_KEY);
-    console.log('API 키 길이:', GEMINI_API_KEY.length);
+    console.log('API 키 길이:', GEMINI_API_KEY?.length || 0);
 
     if (!GEMINI_API_KEY) {
       return NextResponse.json({
