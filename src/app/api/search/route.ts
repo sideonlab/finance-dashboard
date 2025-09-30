@@ -24,7 +24,7 @@ function loadCompaniesData(): Company[] {
       companiesData = [];
     }
   }
-  return companiesData;
+  return companiesData || [];
 }
 
 export async function GET(request: NextRequest) {
