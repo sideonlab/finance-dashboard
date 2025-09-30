@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Company } from '@/types/company';
 import BalanceSheetChart from './charts/BalanceSheetChart';
 import IncomeStatementChart from './charts/IncomeStatementChart';
@@ -56,12 +56,12 @@ export default function FinancialDashboard({ company }: FinancialDashboardProps)
   const [selectedYear, setSelectedYear] = useState<string>('2024'); // 2024년으로 기본값 변경
   const [selectedReport, setSelectedReport] = useState<string>('11011'); // 사업보고서
 
-  const reportTypes = [
+  const reportTypes = useMemo(() => [
     { code: '11011', name: '사업보고서' },
     { code: '11012', name: '반기보고서' },
     { code: '11013', name: '1분기보고서' },
     { code: '11014', name: '3분기보고서' },
-  ];
+  ], []);
 
   const fetchFinancialData = useCallback(async () => {
     setLoading(true);

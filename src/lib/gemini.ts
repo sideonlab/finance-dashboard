@@ -283,15 +283,6 @@ function fallbackParseResponse(text: string): FinancialAnalysisResponse {
   };
 }
 
-/**
- * 텍스트에서 특정 섹션 추출 (간단한 형식)
- */
-function extractSection(text: string, sectionName: string): string {
-  // 새로운 간단한 형식: "SUMMARY:" 또는 "INVESTMENT_OUTLOOK:"
-  const regex = new RegExp(`${sectionName}:\\s*([\\s\\S]*?)(?=\\n[A-Z_]+:|$)`, 'i');
-  const match = text.match(regex);
-  return match ? match[1].trim() : '';
-}
 
 
 /**

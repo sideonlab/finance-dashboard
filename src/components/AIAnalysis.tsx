@@ -12,18 +12,24 @@ interface AIAnalysisData {
   investmentOutlook: string;
 }
 
+interface FinancialMetric {
+  thstrm_amount: string;
+  frmtrm_amount?: string;
+  bfefrmtrm_amount?: string;
+}
+
 interface AIAnalysisProps {
   company: Company;
   financialData: {
     bsnsYear: string;
     reprtCode: string;
     keyMetrics: {
-      totalRevenue?: any;
-      operatingProfit?: any;
-      netIncome?: any;
-      totalAssets?: any;
-      totalLiabilities?: any;
-      totalEquity?: any;
+      totalRevenue?: FinancialMetric;
+      operatingProfit?: FinancialMetric;
+      netIncome?: FinancialMetric;
+      totalAssets?: FinancialMetric;
+      totalLiabilities?: FinancialMetric;
+      totalEquity?: FinancialMetric;
     };
   };
 }
@@ -96,7 +102,7 @@ export default function AIAnalysis({ company, financialData }: AIAnalysisProps) 
         console.log('AI 분석 실패:', result.error);
         setError(result.error || 'AI 분석에 실패했습니다.');
       }
-    } catch (err) {
+    } catch {
       setError('AI 분석 요청 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);

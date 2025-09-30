@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log('=== Gemini API 테스트 시작 ===');
     console.log('API 키 존재:', !!GEMINI_API_KEY);

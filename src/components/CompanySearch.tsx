@@ -16,7 +16,7 @@ export default function CompanySearch({ onCompanySelect }: CompanySearchProps) {
   const [showResults, setShowResults] = useState(false);
 
   // 디바운스 검색
-  const debounceSearch = useCallback(async (searchQuery: string) => {
+  const searchFunction = useCallback(async (searchQuery: string) => {
       if (!searchQuery.trim()) {
         setResults([]);
         setShowResults(false);
@@ -48,8 +48,8 @@ export default function CompanySearch({ onCompanySelect }: CompanySearchProps) {
   }, []);
 
   const debouncedSearch = useCallback(
-    debounce(debounceSearch, 300),
-    [debounceSearch]
+    debounce(searchFunction, 300),
+    [searchFunction]
   );
 
   useEffect(() => {
