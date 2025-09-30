@@ -30,8 +30,8 @@ export const commonChartOptions = {
     },
     tooltip: {
       callbacks: {
-        label: function(context: any) {
-          const value = context.parsed.y || context.parsed;
+        label: function(context: { dataset: { label: string }; parsed: { y?: number } | number }) {
+          const value = (typeof context.parsed === 'number' ? context.parsed : context.parsed.y) || 0;
           return `${context.dataset.label}: ${formatAmount(value)}`;
         }
       }
@@ -46,8 +46,8 @@ export const barChartOptions = {
     y: {
       beginAtZero: true,
       ticks: {
-        callback: function(value: any) {
-          return formatAmount(value);
+        callback: function(value: string | number) {
+          return formatAmount(typeof value === 'string' ? parseFloat(value) : value);
         }
       }
     },

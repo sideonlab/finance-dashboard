@@ -293,21 +293,6 @@ function extractSection(text: string, sectionName: string): string {
   return match ? match[1].trim() : '';
 }
 
-/**
- * 텍스트에서 리스트 섹션 추출 (간단한 형식)
- */
-function extractListSection(text: string, sectionName: string): string[] {
-  const sectionText = extractSection(text, sectionName);
-  if (!sectionText) return [];
-  
-  const items = sectionText
-    .split('\n')
-    .filter(line => line.trim().startsWith('-'))
-    .map(line => line.replace(/^-\s*/, '').trim())
-    .filter(item => item.length > 0);
-  
-  return items;
-}
 
 /**
  * 숫자를 한국어 단위로 포맷팅

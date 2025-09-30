@@ -16,8 +16,7 @@ export default function CompanySearch({ onCompanySelect }: CompanySearchProps) {
   const [showResults, setShowResults] = useState(false);
 
   // 디바운스 검색
-  const debounceSearch = useCallback(
-    debounce(async (searchQuery: string) => {
+  const debounceSearch = useCallback(async (searchQuery: string) => {
       if (!searchQuery.trim()) {
         setResults([]);
         setShowResults(false);
@@ -39,20 +38,23 @@ export default function CompanySearch({ onCompanySelect }: CompanySearchProps) {
           setResults([]);
           setShowResults(false);
         }
-      } catch (err) {
+      } catch {
         setError('검색 중 오류가 발생했습니다.');
         setResults([]);
         setShowResults(false);
       } finally {
         setLoading(false);
       }
-    }, 300),
-    []
+  }, []);
+
+  const debouncedSearch = useCallback(
+    debounce(debounceSearch, 300),
+    [debounceSearch]
   );
 
   useEffect(() => {
-    debounceSearch(query);
-  }, [query, debounceSearch]);
+    debouncedSearch(query);
+  }, [query, debouncedSearch]);
 
   const handleCompanySelect = (company: Company) => {
     setSelectedCompany(company);
@@ -151,7 +153,7 @@ export default function CompanySearch({ onCompanySelect }: CompanySearchProps) {
 }
 
 // 디바운스 유틸리티 함수
-function debounce<T extends (...args: any[]) => any>(
+function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {

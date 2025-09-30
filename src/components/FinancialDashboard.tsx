@@ -1,27 +1,47 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Company } from '@/types/company';
 import BalanceSheetChart from './charts/BalanceSheetChart';
 import IncomeStatementChart from './charts/IncomeStatementChart';
 import AIAnalysis from './AIAnalysis';
 import { formatAmount } from './charts/ChartConfig';
 
+interface FinancialMetric {
+  thstrm_amount: string;
+  frmtrm_amount?: string;
+  bfefrmtrm_amount?: string;
+}
+
 interface FinancialData {
   corpCode: string;
   bsnsYear: string;
   reprtCode: string;
   keyMetrics: {
-    totalAssets?: any;
-    totalLiabilities?: any;
-    totalEquity?: any;
-    totalRevenue?: any;
-    operatingProfit?: any;
-    netIncome?: any;
+    totalAssets?: FinancialMetric;
+    totalLiabilities?: FinancialMetric;
+    totalEquity?: FinancialMetric;
+    totalRevenue?: FinancialMetric;
+    operatingProfit?: FinancialMetric;
+    netIncome?: FinancialMetric;
   };
   chartData: {
-    balanceSheet: any;
-    incomeStatement: any;
+    balanceSheet: {
+      labels: string[];
+      datasets: {
+        label: string;
+        data: number[];
+        backgroundColor: string[];
+      }[];
+    };
+    incomeStatement: {
+      labels: string[];
+      datasets: {
+        label: string;
+        data: number[];
+        backgroundColor: string;
+      }[];
+    };
   };
 }
 
@@ -43,7 +63,7 @@ export default function FinancialDashboard({ company }: FinancialDashboardProps)
     { code: '11014', name: '3분기보고서' },
   ];
 
-  const fetchFinancialData = async () => {
+  const fetchFinancialData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -65,16 +85,16 @@ export default function FinancialDashboard({ company }: FinancialDashboardProps)
         
         setError(errorMessage);
       }
-    } catch (err) {
+    } catch {
       setError('서버 연결에 실패했습니다.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [company.corp_code, selectedYear, selectedReport, reportTypes]);
 
   useEffect(() => {
     fetchFinancialData();
-  }, [company.corp_code, selectedYear, selectedReport]);
+  }, [company.corp_code, selectedYear, selectedReport, fetchFinancialData]);
 
   if (loading) {
     return (
